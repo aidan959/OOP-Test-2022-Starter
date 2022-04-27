@@ -29,7 +29,6 @@ public class NematodeVisualiser extends PApplet
 		smooth();				
 	}
 	
-
 	public void loadNematodes()
 	{
 	}
