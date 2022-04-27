@@ -6,16 +6,17 @@ import processing.core.PApplet;
 import processing.data.TableRow;
 
 public class Nematode {
-    public Nematode(String name, int length, int limbs, Gender gender, PApplet pa) {
-        this.name = name;
-        this.length = length;
-        this.limbs = limbs;
-        this.gender = gender;
+    public Nematode(String name, int length, Boolean limbs, Gender gender, boolean eyes,PApplet pa) {
+        setName(name);
+        setLength(length);
+        setLimbs(limbs);
+        setGender(gender);
+        setEyes(eyes);
         this.pa = pa;
     }
     public Nematode(TableRow tr, PApplet pa){
         
-        this(tr.getString("name"), tr.getInt("length"), tr.getInt("limbs"), Gender.valueOf(tr.getString("gender")), pa);
+        this(tr.getString("name"), tr.getInt("length"), tr.getInt("limbs") == 1, Gender.valueOf(tr.getString("gender")), tr.getInt("eyes") == 1, pa);
     }
     public enum Gender{
         m,
@@ -25,8 +26,9 @@ public class Nematode {
     }
     private String name;
     private int length;
-    private int limbs;
+    private boolean limbs;
     private Gender gender;
+    private boolean eyes;
     private PApplet pa;
     public String getName() {
         return name;
@@ -40,11 +42,17 @@ public class Nematode {
     public void setLength(int length) {
         this.length = length;
     }
-    public int getLimbs() {
+    public boolean getLimbs() {
         return limbs;
     }
-    public void setLimbs(int limbs) {
+    public void setLimbs(boolean limbs) {
         this.limbs = limbs;
+    }
+    public boolean getEyes() {
+        return eyes;
+    }
+    public void setEyes(boolean eyes) {
+        this.eyes = eyes;
     }
     public Gender getGender() {
         return gender;
@@ -55,6 +63,14 @@ public class Nematode {
     
     Vector center;
     float size = 50; 
+    float extremityLength = 15;
+    private float movementX = 0;
+    public float getMovementX(){
+        return movementX;
+    }
+    public void setMovementX(float movementX){
+        this.movementX = movementX;
+    }
     public void render(){
         float x = pa.width / 2f;
         float y = ((pa.height - (size * length))/2);
@@ -62,22 +78,53 @@ public class Nematode {
         
         pa.textSize(20);
         pa.textAlign(PApplet.CENTER);
-        pa.text(name, x, y + size/2);
         
-        pa.strokeWeight(5);
+        pa.strokeWeight(3);
         pa.translate(x, y + size/2);
-        
+        pa.translate(movementX, 0);
+        pa.text(name, 0,  -size/2);
         pa.noFill();
         for(int i = 0; i < length; i++){
-            pa.stroke(39, 100, 100);
             pa.translate(0, size);
+            pa.stroke(pa.frameCount % 360 + 5*i, 150, 100);
+
+            if(eyes && i == 0){
+                float height = PApplet.sin(45) * (size/2) - 5;
+                float width = size/2 - 5;
+                pa.line(-width, -height, (-width) - extremityLength, -height - extremityLength);
+                pa.circle(-width - extremityLength- size/8, -height - extremityLength - size/8, size/4);
+                pa.stroke(pa.frameCount % 360+(10*i), 150, 100);
+
+                pa.line(width, -height, (width) + extremityLength, -height - extremityLength);
+                pa.stroke(pa.frameCount % 360+(20*i), 150, 100);
+
+                pa.circle(width + extremityLength + size/8, -height - extremityLength - size/8, size/4);
+                
+            }
             pa.circle(0, 0, size);
-        }
+            if(limbs){
+                pa.stroke(pa.frameCount % 360-(10*i), 150, 100);
 
-        for(int i = 0; i < limbs; i++){
+                pa.line(-size/2, 0, (-size/2) -30, 0);
+                pa.line(size/2, 0, (size/2) + 30, 0);
 
+            }
+            
         }
+        
         switch (gender){
+            case m:
+            pa.line(0, (size/2), 0, (size/2) + extremityLength);
+            pa.circle(0, (size/2) + extremityLength + size/8, size/4);
+            break;
+            case f:
+            pa.circle(0, 0, (size*2)/4);
+            break;
+            case h:
+            pa.circle(0, 0, (size*2)/4);
+            break;
+            case n:
+            break;
 
         }
         pa.popMatrix();
