@@ -54,11 +54,36 @@ public class Nematode {
     }
     
     Vector center;
+    float size = 50; 
     public void render(){
-        pa.text(name, pa.width/2, pa.height/2);
+        float x = pa.width / 2f;
+        float y = ((pa.height - (size * length))/2);
+        pa.pushMatrix();
+        
+        pa.textSize(20);
+        pa.textAlign(PApplet.CENTER);
+        pa.text(name, x, y + size/2);
+        
+        pa.strokeWeight(5);
+        pa.translate(x, y + size/2);
+        
+        pa.noFill();
+        for(int i = 0; i < length; i++){
+            pa.stroke(39, 100, 100);
+            pa.translate(0, size);
+            pa.circle(0, 0, size);
+        }
+
+        for(int i = 0; i < limbs; i++){
+
+        }
+        switch (gender){
+
+        }
+        pa.popMatrix();
     }
     public String toString(){
-        return "Nematode " + name + ", length: " + length + ", limbs: " + limbs + ", gender: " + evalGender() ;
+        return "Nematode " + name + ", length: " + length + ", limbs: " + limbs + ", gender: " + evalGender();
     }
     public String evalGender(){
         switch (gender){
@@ -73,5 +98,4 @@ public class Nematode {
         }
         return gender.toString();
     }
-
 }
